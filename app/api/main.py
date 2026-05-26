@@ -30,6 +30,7 @@ def create_app() -> FastAPI:
     from app.endpoints.continuous_intelligence import router as continuous_router
     from app.endpoints.workflow_intelligence import router as workflow_router
     from app.endpoints.cross_ecosystem_simulation import router as simulation_router
+    from app.endpoints.governance_intelligence import router as governance_router
     app.include_router(eval_router)
     app.include_router(ingestion_router)
     app.include_router(semantic_router)
@@ -37,6 +38,7 @@ def create_app() -> FastAPI:
     app.include_router(continuous_router)
     app.include_router(workflow_router)
     app.include_router(simulation_router)
+    app.include_router(governance_router)
     app.include_router(health_router)
     
     return app
