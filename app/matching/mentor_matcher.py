@@ -3,30 +3,30 @@ from typing import List, Dict, Any
 from app.semantic.semantic_search import SemanticSearchEngine
 from app.semantic.retrieval_confidence import RetrievalConfidenceEngine
 
-logger = logging.getLogger("ElephantTank.Matching.InvestorMatcher")
+logger = logging.getLogger("ElephantTank.Matching.MentorMatcher")
 
-class InvestorMatcherEngine:
+class MentorMatcherEngine:
     @staticmethod
-    def match_investors(startup_stage: str, startup_description: str, limit: int = 3) -> List[Dict[str, Any]]:
+    def match_mentors(startup_stage: str, startup_description: str, limit: int = 3) -> List[Dict[str, Any]]:
         """
-        Retrieves matching investors from the VectorDB index, computes deterministic compatibility scores,
-        and provides highly explainable VC investment reasoning.
+        Retrieves matching ecosystem mentors from the VectorDB index, computes deterministic compatibility scores,
+        and provides highly explainable mentorship reasoning.
         """
-        logger.info(f"Matching investors for startup in stage '{startup_stage}'...")
-        query_text = f"Stage: {startup_stage}. Description: {startup_description}"
+        logger.info(f"Matching mentors for startup in stage '{startup_stage}'...")
+        query_text = f"Stage compatibility: {startup_stage}. Specialization/Expertise: {startup_description}"
         
-        candidates = SemanticSearchEngine.search_matching_investors(query_text, limit=limit * 2)
+        candidates = SemanticSearchEngine.search_matching_mentors(query_text, limit=limit * 2)
         
         results = []
         for cand in candidates:
             meta = cand["metadata"]
             similarity = cand["similarity"]
-            name = meta.get("name", "Unknown Investor")
+            name = meta.get("name", "Unknown Mentor")
             
-            confidence = RetrievalConfidenceEngine.calculate_investor_match_confidence(
+            confidence = RetrievalConfidenceEngine.calculate_mentor_match_confidence(
                 startup_stage=startup_stage,
                 startup_description=startup_description,
-                investor_metadata=meta,
+                mentor_metadata=meta,
                 semantic_similarity=similarity
             )
             
@@ -39,13 +39,13 @@ class InvestorMatcherEngine:
                 except Exception:
                     industries = []
                     
-            ideal_stage = meta.get("ideal_stage", "Seed")
+            specialization = meta.get("specialization", "")
             
             results.append({
-                "investor_name": name,
+                "mentor_name": name,
                 "match_score": int(confidence["confidence_score"] * 10),  # Map to scale 0 - 100
                 "match_level": confidence["match_level"],
-                "ideal_stage": ideal_stage,
+                "specialization": specialization,
                 "target_industries": industries,
                 "reasoning": confidence["alignment_traces"]
             })

@@ -100,4 +100,16 @@ async def upload_startup_documents(file: UploadFile = File(...)):
     )
     
     # Trigger the existing evaluation logic programmatically
-    return await evaluate_startup(eval_req)
+    res = await evaluate_startup(eval_req)
+    
+    # 5. Dynamic Semantic Indexing
+    try:
+        from app.semantic.index_manager import IndexManager
+        import uuid
+        startup_id = f"st_{uuid.uuid4().hex[:12]}"
+        IndexManager.index_startup(startup_id, structured_data)
+        logger.info(f"Dynamically indexed startup '{structured_data.get('startup_name')}' as {startup_id}.")
+    except Exception as e:
+        logger.error(f"Failed to dynamically index startup into vector database: {e}")
+        
+    return res

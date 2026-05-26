@@ -25,12 +25,11 @@ def create_app() -> FastAPI:
     
     # Bind routers
     from app.endpoints.ingestion import router as ingestion_router
+    from app.endpoints.semantic_intelligence import router as semantic_router
     app.include_router(eval_router)
     app.include_router(ingestion_router)
+    app.include_router(semantic_router)
     app.include_router(health_router)
-    
-    # Matching routers would be included here:
-    # app.include_router(match_router)
     
     return app
 
