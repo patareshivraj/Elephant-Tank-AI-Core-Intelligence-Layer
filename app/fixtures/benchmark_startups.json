@@ -1,0 +1,32 @@
+{
+    "benchmarks": [
+        {
+            "id": "fixture_strong_001",
+            "name": "Acme HealthTech",
+            "type": "STRONG",
+            "expected_score_range": [80, 95],
+            "expected_confidence_min": 90,
+            "profile": {
+                "problem": "Inefficient hospital billing",
+                "solution": "AI-automated coding software",
+                "revenue": "$1.5M ARR",
+                "team": "2x exited founders, ex-Google",
+                "market": "$10B TAM"
+            }
+        },
+        {
+            "id": "fixture_hyped_002",
+            "name": "Quantum Blockchain AI",
+            "type": "WEAK_OVERHYPED",
+            "expected_score_range": [30, 50],
+            "expected_confidence_min": 50,
+            "profile": {
+                "problem": "Web3 is too slow",
+                "solution": "Synergistic blockchain AI agents",
+                "revenue": "UNVERIFIED",
+                "team": "College dropouts, no prior experience",
+                "market": "UNVERIFIED"
+            }
+        }
+    ]
+}
