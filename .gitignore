@@ -1,0 +1,11 @@
+# Environments
+venv/
+env/
+.env
+
+# Cache
+__pycache__/
+.pytest_cache/
+
+# Databases
+chroma_db_store/
