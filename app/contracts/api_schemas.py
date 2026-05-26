@@ -14,6 +14,23 @@ class StartupEvaluationRequest(BaseModel):
     founder_data: str = Field(default=None, description="Optional founder background context")
     target_stage: str = Field(default="Pre-seed", description="Stage used for weighting (Pre-seed, Seed, Series A)")
 
+class SourceDocument(BaseModel):
+    source_type: str = Field(description="Document type (e.g. pitch_deck, resume, founder_bio, market_note)")
+    content: str = Field(description="Raw text content of the document")
+
+class MultiDocumentEvaluationRequest(BaseModel):
+    startup_name: str = Field(description="Name of the startup")
+    documents: List[SourceDocument] = Field(description="List of raw source documents to merge and reason on")
+    target_stage: str = Field(default="Pre-seed", description="Target stage (Pre-seed, Seed, Series A)")
+    investor_profile: Dict[str, Any] = Field(
+        default_factory=lambda: {
+            "preferred_stages": ["seed", "series a"],
+            "preferred_domains": ["deep tech", "ai saas", "logistics"],
+            "risk_tolerance": "balanced"
+        },
+        description="Optional target investor profile to compute fit compatibility"
+    )
+
 class HealthResponse(BaseModel):
     system_status: str
     groq_status: str
