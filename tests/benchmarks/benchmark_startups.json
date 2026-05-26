@@ -1,0 +1,44 @@
+[
+  {
+    "category": "STRONG_STARTUP",
+    "startup_name": "MediGen AI",
+    "startup_description": "We are a DeepTech healthcare infrastructure platform. We provide an FDA-cleared ML diagnostic API for radiology labs, currently deployed in 12 major hospitals with $1.2M ARR. Our moat is a proprietary dataset of 5 million annotated scans.",
+    "founder_data": "Ex-DeepMind researcher (PhD) and a commercial co-founder with 2 successful healthcare exits.",
+    "target_stage": "Series A"
+  },
+  {
+    "category": "WEAK_STARTUP",
+    "startup_name": "ChatBotz",
+    "startup_description": "An AI wrapper around ChatGPT that helps local restaurants write their social media posts. We charge $5/month. Currently have 3 free users.",
+    "founder_data": "Recent college grad with marketing degree, no engineering experience.",
+    "target_stage": "Pre-seed"
+  },
+  {
+    "category": "HYPE_STARTUP",
+    "startup_name": "MetaChain Web3 AI",
+    "startup_description": "We are revolutionizing the decentralized spatial computing metaverse using synergistic GenAI agents on the blockchain to disrupt legacy paradigms. Total TAM is $4 Trillion.",
+    "founder_data": "Crypto influencer.",
+    "target_stage": "Pre-seed"
+  },
+  {
+    "category": "INCOMPLETE_STARTUP",
+    "startup_name": "Secret Project X",
+    "startup_description": "We are building an app to help people.",
+    "founder_data": "",
+    "target_stage": "Seed"
+  },
+  {
+    "category": "STRONG_FOUNDER_WEAK_IDEA",
+    "startup_name": "DogWalker AI",
+    "startup_description": "An AI platform that predicts when your dog needs to go to the bathroom based on their eating habits.",
+    "founder_data": "Ex-VP of Engineering at Google, Ex-Stripe PM, raised $5M previously for a successful B2B SaaS.",
+    "target_stage": "Seed"
+  },
+  {
+    "category": "WEAK_FOUNDER_STRONG_IDEA",
+    "startup_name": "SecureQuantum",
+    "startup_description": "A novel quantum-resistant encryption protocol designed for financial institutions to secure ledgers against next-gen quantum decryption attacks. Huge market demand.",
+    "founder_data": "High school student who read a whitepaper. No mathematical background.",
+    "target_stage": "Pre-seed"
+  }
+]

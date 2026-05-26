@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from app.contracts.api_schemas import StartupEvaluationRequest, ErrorResponse, StartupEvaluationResponse
+from app.validation.json_repair import RobustJSONParser
+from app.confidence.confidence_engine import DeterministicConfidenceEngine
 
 logger = logging.getLogger("ElephantTank.API.Evaluation")
 router = APIRouter()
@@ -32,110 +34,15 @@ async def evaluate_startup(request: StartupEvaluationRequest):
     # 2. Setup Groq Client
     client = Groq(api_key=groq_api_key)
     
-    # 3. Prompt Builder (Force JSON)
-    system_prompt = """
-    SYSTEM CONTEXT:
-    You are Elephant Tank AI — a deterministic startup intelligence and evaluation engine operating under structured VC due diligence principles.
-
-    Your responsibility is to evaluate startups using:
-    - evidence-based reasoning,
-    - structured startup intelligence,
-    - deterministic analysis philosophy,
-    - and investor-oriented evaluation logic.
-
-    You are NOT:
-    - a chatbot,
-    - a motivational assistant,
-    - a startup hype generator,
-    - or an autonomous AI agent.
-
-    You must behave like:
-    - a venture analyst,
-    - startup due diligence associate,
-    - accelerator evaluation engine,
-    - and structured startup intelligence system.
-
-    --------------------------------------------------
-    CURRENT PIPELINE CONTEXT
-    --------------------------------------------------
-    The current request originates from FastAPI Swagger UI Direct JSON evaluation mode.
-    SKIP document ingestion, file extraction, PDF parsing, OCR, and artifact detection stages.
-    ROUTE DIRECTLY to startup evaluation, founder intelligence, risk analysis, deterministic scoring, and structured recommendation generation.
-
-    --------------------------------------------------
-    PIPELINE EXECUTION MODE
-    --------------------------------------------------
-    Execution Mode: DIRECT_JSON_STARTUP_EVALUATION
-
-    --------------------------------------------------
-    EVALUATION REQUIREMENTS
-    --------------------------------------------------
-    Analyze:
-    1. Innovation & Defensibility
-    2. Market Potential
-    3. Scalability
-    4. Founder Capability
-    5. Funding Readiness
-    6. Startup Risks
-    7. Execution Readiness
-
-    Each evaluation must:
-    - include structured reasoning,
-    - remain explainable,
-    - avoid hallucinations,
-    - and prioritize startup realism.
-
-    --------------------------------------------------
-    HALLUCINATION CONTROL RULES
-    --------------------------------------------------
-    DO NOT: invent traction, fabricate revenue, assume PMF, create fake partnerships, infer customers, or generate unsupported startup claims.
-    If information is missing: explicitly mark uncertainty, reduce confidence, and generate due diligence questions.
-
-    --------------------------------------------------
-    CONFIDENCE RULES
-    --------------------------------------------------
-    Confidence should decrease when details are vague, traction is missing, founder information is incomplete, or market validation is absent. Never return fake precision.
-
-    --------------------------------------------------
-    OUTPUT REQUIREMENTS
-    --------------------------------------------------
-    Return ONLY valid JSON.
-    DO NOT include markdown, explanations outside JSON, conversational text, or formatting wrappers.
-
-    Expected structure:
-    {
-      "startup_profile": {
-        "startup_name": "string",
-        "target_stage": "string"
-      },
-      "evaluation_results": {
-        "innovation_score": 1,
-        "market_score": 1,
-        "scalability_score": 1,
-        "founder_score": 1,
-        "funding_readiness_score": 1
-      },
-      "reasoning_traces": {
-        "innovation_reasoning": ["string"],
-        "market_reasoning": ["string"],
-        "scalability_reasoning": ["string"],
-        "founder_reasoning": ["string"]
-      },
-      "founder_intelligence": {
-        "strengths": ["string"],
-        "weaknesses": ["string"]
-      },
-      "risk_analysis": {
-        "risks": ["string"]
-      },
-      "recommendations": ["string"],
-      "due_diligence_questions": ["string"],
-      "confidence_summary": {
-        "overall_confidence": 1
-      }
-    }
-    """
-    
+    # 3. Prompt Builder (Dynamic Loading)
+    prompt_path = os.path.join(os.path.dirname(__file__), "..", "prompts", "startup_eval_v1.txt")
+    try:
+        with open(prompt_path, "r", encoding="utf-8") as f:
+            system_prompt = f.read()
+    except Exception as e:
+        logger.error(f"Failed to load system prompt: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error: Prompt configuration missing.")
+        
     user_prompt = f"Startup Name: {request.startup_name}\nStage: {request.target_stage}\nFounder: {request.founder_data}\nDescription: {request.startup_description}"
 
     try:
@@ -155,20 +62,17 @@ async def evaluate_startup(request: StartupEvaluationRequest):
         logger.info(f"RAW GROQ RESPONSE:\n{raw_json}")
         
         try:
-            parsed_data = json.loads(raw_json)
-        except json.JSONDecodeError:
-            # JSON REPAIR LAYER: Strip hallucinated markdown blocks (```json ... ```)
-            logger.warning("Malformed JSON detected. Attempting repair layer...")
-            repaired_json = raw_json.replace("```json", "").replace("```", "").strip()
-            parsed_data = json.loads(repaired_json)
-            logger.info("JSON Repair successful!")
+            parsed_data = RobustJSONParser.parse_and_repair(raw_json)
+        except ValueError as ve:
+            logger.error(f"JSON Repair Failed. {ve}")
+            raise HTTPException(status_code=500, detail="Failed to parse AI response as JSON.")
             
         # Ensure pipeline_id exists
         if "pipeline_id" not in parsed_data or not parsed_data["pipeline_id"]:
             import uuid
             parsed_data["pipeline_id"] = f"eval_{uuid.uuid4().hex[:8]}"
             
-        # 6. DETERMINISTIC LOCAL PYTHON MATH ENGINE
+        # 6. DETERMINISTIC LOCAL PYTHON MATH ENGINE & NORMALIZATION
         # Extract base scores (1-10 scale)
         eval_res = parsed_data.get("evaluation_results", {})
         inv = eval_res.get("innovation_score", 0)
@@ -176,6 +80,21 @@ async def evaluate_startup(request: StartupEvaluationRequest):
         scl = eval_res.get("scalability_score", 0)
         fnd = eval_res.get("founder_score", 0)
         frs = eval_res.get("funding_readiness_score", 0)
+        
+        # Normalization: Cap innovation if "wrapper" is detected in description
+        desc_lower = request.startup_description.lower()
+        if "wrapper" in desc_lower or "chatgpt wrapper" in desc_lower:
+            inv = min(inv, 4)  # Hard cap on innovation for basic wrappers
+            logger.info("Normalization Applied: Capped innovation score for AI wrapper.")
+            
+        # Normalization: Penalty for saturated markets
+        if "food delivery" in desc_lower or "social media" in desc_lower:
+            mkt = min(mkt, 6)
+            logger.info("Normalization Applied: Capped market score for saturated industry.")
+            
+        # Update parsed data with normalized scores
+        parsed_data["evaluation_results"]["innovation_score"] = inv
+        parsed_data["evaluation_results"]["market_score"] = mkt
         
         # Calculate overall score dynamically based on stage (Scale 0-100)
         stage = request.target_stage.lower()
@@ -186,25 +105,35 @@ async def evaluate_startup(request: StartupEvaluationRequest):
         else: # Series A
             overall = (inv * 10 + mkt * 20 + scl * 30 + fnd * 20 + frs * 20) / 10
             
-        parsed_data["evaluation_results"]["overall_score"] = int(overall * 10)
+        parsed_data["evaluation_results"]["overall_score"] = int(overall)
         
-        # 7. STRUCTURED EXECUTION LOGGING
+        # 7. DETERMINISTIC CONFIDENCE ENGINE
+        base_conf = parsed_data.get("confidence_summary", {}).get("overall_confidence", 5)
+        final_conf = DeterministicConfidenceEngine.calculate_confidence(
+            request.startup_description, 
+            request.founder_data, 
+            base_conf
+        )
+        if "confidence_summary" not in parsed_data:
+            parsed_data["confidence_summary"] = {}
+        parsed_data["confidence_summary"]["overall_confidence"] = final_conf
+        
+        # 8. STRUCTURED EXECUTION LOGGING
         import time
         parsed_data["execution_logs"] = [
             {
                 "stage": "STARTUP_EVALUATION",
                 "status": "SUCCESS",
-                "message": "Qualitative reasoning generated by Groq. Deterministic scoring calculated locally.",
+                "message": "Qualitative reasoning generated by Groq. Deterministic scoring and confidence calculated locally.",
                 "timestamp": int(time.time())
             }
         ]
         
-        # 8. Validated Response (Pydantic enforces this exact output to Swagger)
+        # 9. Validated Response (Pydantic enforces this exact output to Swagger)
         return StartupEvaluationResponse(**parsed_data)
         
-    except json.JSONDecodeError:
-        logger.error("JSON Repair Failed. Groq returned irrecoverable output.")
-        raise HTTPException(status_code=500, detail="Failed to parse AI response as JSON.")
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Pipeline execution failed: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
