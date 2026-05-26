@@ -57,13 +57,13 @@ async def get_startup_similarity(req: SimilarityRequest):
         start_time = time.time()
         res = StartupSimilarityEngine.evaluate_similarity(req.startup_description, limit=req.limit)
         
+        from app.utils.execution_logger import create_execution_log
         logs = [
-            {
-                "stage": "SEMANTIC_SIMILARITY",
-                "status": "SUCCESS",
-                "message": f"Successfully calculated cosine similarity across startups index in {time.time() - start_time:.3f}s.",
-                "timestamp": int(time.time())
-            }
+            create_execution_log(
+                stage="SEMANTIC_SIMILARITY",
+                status="SUCCESS",
+                message=f"Successfully calculated cosine similarity across startups index in {time.time() - start_time:.3f}s."
+            )
         ]
         return SimilarityResponse(
             similar_startups=res["similar_startups"],
@@ -87,13 +87,13 @@ async def match_investors(req: MatchRequest):
         start_time = time.time()
         matches = InvestorMatcherEngine.match_investors(req.target_stage, req.startup_description, limit=req.limit)
         
+        from app.utils.execution_logger import create_execution_log
         logs = [
-            {
-                "stage": "INVESTOR_MATCHING",
-                "status": "SUCCESS",
-                "message": f"Retrieved top {len(matches)} investor matches from active vector database index.",
-                "timestamp": int(time.time())
-            }
+            create_execution_log(
+                stage="INVESTOR_MATCHING",
+                status="SUCCESS",
+                message=f"Retrieved top {len(matches)} investor matches from active vector database index."
+            )
         ]
         return InvestorMatchResponse(matches=matches, execution_logs=logs)
     except Exception as e:
@@ -110,13 +110,13 @@ async def match_mentors(req: MatchRequest):
         start_time = time.time()
         matches = MentorMatcherEngine.match_mentors(req.target_stage, req.startup_description, limit=req.limit)
         
+        from app.utils.execution_logger import create_execution_log
         logs = [
-            {
-                "stage": "MENTOR_MATCHING",
-                "status": "SUCCESS",
-                "message": f"Retrieved top {len(matches)} mentor matches from active vector database index.",
-                "timestamp": int(time.time())
-            }
+            create_execution_log(
+                stage="MENTOR_MATCHING",
+                status="SUCCESS",
+                message=f"Retrieved top {len(matches)} mentor matches from active vector database index."
+            )
         ]
         return MentorMatchResponse(matches=matches, execution_logs=logs)
     except Exception as e:
@@ -134,13 +134,13 @@ async def get_ecosystem_analysis():
         start_time = time.time()
         res = EcosystemIntelligenceEngine.analyze_ecosystem()
         
+        from app.utils.execution_logger import create_execution_log
         logs = [
-            {
-                "stage": "ECOSYSTEM_ANALYSIS",
-                "status": "SUCCESS",
-                "message": f"Successfully mapped and cataloged ecosystem vectors in {time.time() - start_time:.3f}s.",
-                "timestamp": int(time.time())
-            }
+            create_execution_log(
+                stage="ECOSYSTEM_ANALYSIS",
+                status="SUCCESS",
+                message=f"Successfully mapped and cataloged ecosystem vectors in {time.time() - start_time:.3f}s."
+            )
         ]
         return EcosystemResponse(
             active_market_clusters=res["active_market_clusters"],

@@ -3,6 +3,7 @@ import json
 import time
 import logging
 from typing import Dict, Any, List, Optional
+from app.utils.execution_logger import create_execution_log
 
 logger = logging.getLogger("ElephantTank.Memory.StartupMemory")
 
@@ -79,12 +80,11 @@ class StartupMemoryEngine:
         
         cls._save_db(db)
         
-        return {
-            "stage": "STARTUP_MEMORY_UPDATE",
-            "status": "SUCCESS",
-            "message": f"Successfully committed evaluation milestone for '{startup_name}' to persistence.",
-            "timestamp": now
-        }
+        return create_execution_log(
+            stage="STARTUP_MEMORY_UPDATE",
+            status="SUCCESS",
+            message=f"Successfully committed evaluation milestone for '{startup_name}' to persistence."
+        )
 
     @classmethod
     def get_startup_history(cls, startup_name: str) -> Optional[Dict[str, Any]]:

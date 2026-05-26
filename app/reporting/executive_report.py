@@ -1,6 +1,7 @@
 import logging
 import time
 from typing import Dict, Any
+from app.utils.execution_logger import create_execution_log
 
 from app.reporting.investment_memo import InvestmentMemoEngine
 from app.reporting.founder_report import FounderReportEngine
@@ -94,11 +95,10 @@ class ExecutiveReportGenerator:
             "prioritized_recommendations": recs_report,
             "due_diligence_questions": evaluation_response.get("due_diligence_questions", []),
             "execution_logs": [
-                {
-                    "stage": "REPORT_GENERATION",
-                    "status": "SUCCESS",
-                    "message": f"Successfully compiled master strategic venture intelligence report in {elapsed_time:.3f}s.",
-                    "timestamp": int(time.time())
-                }
+                create_execution_log(
+                    stage="REPORT_GENERATION",
+                    status="SUCCESS",
+                    message=f"Successfully compiled master strategic venture intelligence report in {elapsed_time:.3f}s."
+                )
             ]
         }

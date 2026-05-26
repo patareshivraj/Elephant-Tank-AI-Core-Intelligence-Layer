@@ -1,6 +1,7 @@
 import os
 import time
 import logging
+from app.utils.execution_logger import create_execution_log
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 from typing import Dict, Any
@@ -215,12 +216,11 @@ async def generate_institutional_report(request: MultiDocumentEvaluationRequest)
             orchestrated.get("execution_log"),
             synthesis.get("execution_log"),
             memo.get("execution_log"),
-            {
-                "stage": "LONG_CONTEXT_REASONING",
-                "status": "SUCCESS",
-                "message": f"Successfully completed advanced institutional reasoning pipeline in {time.time() - start_time:.3f}s.",
-                "timestamp": int(time.time())
-            }
+            create_execution_log(
+                stage="LONG_CONTEXT_REASONING",
+                status="SUCCESS",
+                message=f"Successfully completed advanced institutional reasoning pipeline in {time.time() - start_time:.3f}s."
+            )
         ]
     }
     

@@ -69,7 +69,8 @@ class ExecutionLog(BaseModel):
     stage: str
     status: str
     message: str
-    timestamp: int
+    timestamp_unix: int
+    timestamp_readable: str
 
 class StartupEvaluationResponse(BaseModel):
     pipeline_id: str

@@ -1,6 +1,7 @@
 import time
 import logging
 from typing import Dict, Any, List
+from app.utils.execution_logger import create_execution_log
 
 from app.memory.startup_memory import StartupMemoryEngine
 from app.memory.founder_memory import FounderMemoryEngine
@@ -77,9 +78,11 @@ class ContinuousIntelligenceUpdateEngine:
         log_edge_timing = VentureKnowledgeGraph.add_edge(startup_name, timing_verdict, "HAS_TIMING")
         logs.append(log_edge_timing)
         
+        log_data = create_execution_log("CONTINUOUS_INTELLIGENCE", "SUCCESS", f"Successfully completed continuous intelligence update cycle for '{startup_name}'.")
         return {
             "status": "SUCCESS",
             "message": f"Successfully completed continuous intelligence update cycle for '{startup_name}'.",
-            "timestamp": now,
+            "timestamp_unix": log_data["timestamp_unix"],
+            "timestamp_readable": log_data["timestamp_readable"],
             "execution_logs": logs
         }

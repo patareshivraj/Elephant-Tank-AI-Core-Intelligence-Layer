@@ -3,6 +3,7 @@ import json
 import time
 import logging
 from typing import Dict, Any, List, Optional
+from app.utils.execution_logger import create_execution_log
 
 logger = logging.getLogger("ElephantTank.Memory.FounderMemory")
 
@@ -75,12 +76,11 @@ class FounderMemoryEngine:
         
         cls._save_db(db)
         
-        return {
-            "stage": "FOUNDER_MEMORY_UPDATE",
-            "status": "SUCCESS",
-            "message": f"Successfully updated founder progression timeline for '{name}'.",
-            "timestamp": now
-        }
+        return create_execution_log(
+            stage="FOUNDER_MEMORY_UPDATE",
+            status="SUCCESS",
+            message=f"Successfully updated founder progression timeline for '{name}'."
+        )
 
     @classmethod
     def get_founder_history(cls, name: str) -> Optional[Dict[str, Any]]:

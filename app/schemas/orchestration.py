@@ -5,7 +5,8 @@ class ExecutionLog(BaseModel):
     stage: str
     status: str
     message: str
-    timestamp: float
+    timestamp_unix: int
+    timestamp_readable: str
 
 class UnifiedIntelligenceOutput(BaseModel):
     pipeline_id: str = Field(description="Unique UUID for this execution run")

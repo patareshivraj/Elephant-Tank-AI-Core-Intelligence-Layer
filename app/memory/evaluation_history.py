@@ -3,6 +3,7 @@ import json
 import time
 import logging
 from typing import Dict, Any, List, Optional
+from app.utils.execution_logger import create_execution_log
 
 logger = logging.getLogger("ElephantTank.Memory.EvaluationHistory")
 
@@ -61,12 +62,11 @@ class EvaluationHistoryTracker:
         db[key].append(run_record)
         cls._save_history(db)
         
-        return {
-            "stage": "EVALUATION_HISTORY_UPDATE",
-            "status": "SUCCESS",
-            "message": f"Recorded run v{run_record['run_version']} for '{startup_name}'.",
-            "timestamp": now
-        }
+        return create_execution_log(
+            stage="EVALUATION_HISTORY_UPDATE",
+            status="SUCCESS",
+            message=f"Recorded run v{run_record['run_version']} for '{startup_name}'."
+        )
 
     @classmethod
     def compare_runs(cls, startup_name: str, run_v1: int, run_v2: int) -> Dict[str, Any]:

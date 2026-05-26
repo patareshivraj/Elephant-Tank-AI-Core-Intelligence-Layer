@@ -22,11 +22,14 @@ class PipelineStateManager:
         self._append_log("ERROR", message)
 
     def _append_log(self, status: str, message: str):
+        from app.utils.execution_logger import create_execution_log
+        log_data = create_execution_log(self.current_stage, status, message)
         self.logs.append(ExecutionLog(
-            stage=self.current_stage,
-            status=status,
-            message=message,
-            timestamp=time.time()
+            stage=log_data["stage"],
+            status=log_data["status"],
+            message=log_data["message"],
+            timestamp_unix=log_data["timestamp_unix"],
+            timestamp_readable=log_data["timestamp_readable"]
         ))
         
     def export_state(self) -> Dict:
