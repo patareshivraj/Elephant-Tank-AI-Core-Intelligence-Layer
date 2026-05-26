@@ -1,94 +1,71 @@
-# Elephant Tank AI: Foundational Core Intelligence Engine (Phase 0)
+# 🐘 Elephant Tank AI: Core Intelligence Layer
 
-This is the production-ready foundational intelligence layer for **Elephant Tank AI** — a startup intelligence, venture evaluation, and investment due diligence engine. 
+Welcome to the **Elephant Tank AI Core Intelligence Layer**. 
 
-The system operates strictly under professional Venture Capital (VC) screening, incubator assessment, and due diligence standards. It completely separates **qualitative LLM synthesis (reasoning)** from **deterministic local aggregation, stage weights, and completeness penalties**.
+This repository contains the backend AI engine for the Elephant Tank platform. It is a production-ready, VC-grade intelligence API designed to evaluate startups, score founders, match investors using semantic vector search, and generate professional investment memos.
 
----
-
-## 1. Core Architecture Blueprint
-
-```
-d:\STARTUP\
-├── requirements.txt                 # Project third-party dependencies
-├── README.md                        # Documentation and setup manual
-├── elephant_tank/
-│   ├── __init__.py                  # Package exports
-│   ├── config.py                    # Model routing, weights, and confidence parameters
-│   ├── schemas.py                   # Pydantic data contracts (Ingestion & Final Output)
-│   ├── prompts.py                   # System and evaluation prompt templates
-│   ├── deterministic_logic.py       # Completeness, stage-weighting, and risk penalty algorithms
-│   ├── groq_client.py               # Rate-limit resilient Groq client with simulation fallback
-│   └── orchestrator.py              # Operational pipeline coordinator
-└── tests/
-    └── test_evaluation.py           # Automated test suite (Pre-seed & Series A scenarios)
-```
+> **Note for Frontend/Backend Developers:** If you are here to integrate this AI Layer into your existing application, please read the **[INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md)** for a simple, step-by-step setup and handoff guide.
 
 ---
 
-## 2. Quantitative Engine Specifications
+## 🧠 System Philosophy
 
-### 2.1 Confidence Completeness Scoring
-The system initializes the completeness score at `10.0`. Missing fields are penalized to prevent false precision in early assessments:
-*   **TAM/SAM/SOM Omissions**: `-1.5` points
-*   **MRR/Gross Margin Omissions**: `-2.0` points
-*   **Growth/Active User Omissions**: `-1.5` points
-*   **Empty Co-Founder Registry**: `-2.0` points
-*   **Empty Competitor Registry**: `-1.5` points
-*   **Missing Founder Domain Detail**: `-1.0` point per founder
-
-### 2.2 Stage-Weighted Scoring Grid
-Calculated raw dimension scores (1.0 to 10.0) are combined using weights matching the startup's maturity:
-
-| Dimension | Pre-seed | Seed | Series A |
-| :--- | :---: | :---: | :---: |
-| **Innovation & Defensibility** | **25%** | 15% | 10% |
-| **Founder Capability** | **25%** | 20% | 15% |
-| **Market Potential** | 15% | **20%** | 15% |
-| **Revenue Viability** | 10% | 15% | **25%** |
-| **Scalability** | 10% | 10% | **20%** |
-| **Competition & Risk** | 10% | 10% | 10% |
-| **Funding Readiness** | 5% | 10% | 5% |
-
-### 2.3 Risk Severity Score Penalties
-High and Medium severity threats registered in the AI's risk assessment registry are deducted from the overall score:
-*   **High Severity Risk**: `-0.40` deduction per risk.
-*   **Medium Severity Risk**: `-0.15` deduction per risk.
-*   **Low Severity Risk**: `0.00` deduction.
+This engine was built under a strict "Deterministic-First" philosophy:
+*   **No "AI Math"**: Large Language Models (LLMs) are notoriously bad at math and weighting. This system uses LLMs *strictly* for reading unstructured text and generating narrative prose. All venture scoring, stage-weighting, and risk penalties are calculated locally in Python using hardcoded rules.
+*   **Zero-Psychology Profiling**: When evaluating founders, the engine is explicitly banned from inferring personality traits. It scores human capital purely on evidence (e.g., years of technical experience, prior exits).
+*   **Hallucination Immune System**: Built-in Quality Assurance modules automatically trap and flag the LLM if it attempts to invent revenue numbers that were not present in the original pitch deck.
 
 ---
 
-## 3. Getting Started
+## 🏗️ The 10-Phase Pipeline Architecture
 
-### 3.1 Setup Virtual Environment and Install Dependencies
-Initialize a standard Python virtual environment inside the workspace and install the verified packages:
+This engine was systematically built across 10 distinct phases, now fully unified into a single API service:
 
-```bash
-# Create environment
-python -m venv venv
-
-# Activate on Windows PowerShell
-.\venv\Scripts\Activate.ps1
-
-# Install requirements
-pip install -r requirements.txt
-```
-
-### 3.2 Running in Production Mode (with Groq API)
-Provide your Groq API Key as an environment variable to execute live AI synthesis:
-
-```powershell
-$env:GROQ_API_KEY="your-groq-api-key-here"
-```
-
-### 3.3 Running in Simulation/Testing Mode (No Key Required)
-If no `GROQ_API_KEY` is set in the environment, the engine will **automatically detect it and fall back to the offline VC screening simulator**. This allows you to immediately run and test the complete pipeline offline without API bills or keys.
+*   **Phase 1: Document Ingestion** - Extracts and cleans raw text from Pitch Deck PDFs.
+*   **Phase 2: AI Reasoning** - Groq LLM (Llama 3) maps raw unstructured text into structured dimensions.
+*   **Phase 3: Venture Scoring** - Python math engine calculates 0-100 scores based on startup stage (Pre-seed, Seed, Series A).
+*   **Phase 4: Founder Intelligence** - Evaluates team execution readiness and flags structural risks (e.g., Solo founder dependency).
+*   **Phase 5: Report Generation** - Compiles the hard scores into a 10-section Investor Memo using `mixtral-8x7b`.
+*   **Phase 6: Semantic Matching** - Uses `ChromaDB` to embed the startup and match it with mathematically similar VCs/Mentors.
+*   **Phase 7: Master Orchestration** - Asynchronously binds all phases into a single execution flow.
+*   **Phase 8: Quality Assurance** - Pydantic schema validation and automated hallucination traps.
+*   **Phase 9: FastAPI Service Layer** - Exposes the engine as a modular REST API with structured error handling.
+*   **Phase 10: Performance Optimization** - Implements MD5 disk caching (skips redundant inferences) and dynamic model routing (saves API costs).
 
 ---
 
-## 4. Running the Standardized Test Harness
-To verify Pydantic types, data completeness penalties, and stage weight routing, execute `pytest`:
+## 💻 Tech Stack
 
-```bash
-pytest -v tests/test_evaluation.py
-```
+*   **API Framework**: `FastAPI` & `Uvicorn`
+*   **Data Contracts**: `Pydantic`
+*   **LLM Inference**: `Groq API` (llama3-8b, llama-3.3-70b-versatile, mixtral-8x7b-32768)
+*   **Vector Database**: `ChromaDB`
+*   **Embedding Model**: `BAAI/bge-small-en-v1.5` (via `Sentence-Transformers`)
+*   **PDF Extraction**: `PyMuPDF`
+
+---
+
+## 🚀 Quick Start (For API Developers)
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/patareshivraj/Elephant-Tank-AI-Core-Intelligence-Layer.git
+   cd Elephant-Tank-AI-Core-Intelligence-Layer
+   ```
+2. **Install requirements:**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+3. **Set your Groq API Key:**
+   Create a `.env` file in the root directory:
+   ```env
+   GROQ_API_KEY=your_api_key_here
+   ```
+4. **Boot the API:**
+   ```bash
+   uvicorn app.api.main:app --reload
+   ```
+5. **View the Docs:**
+   Navigate to `http://localhost:8000/docs` to see the automated Swagger API contracts.
