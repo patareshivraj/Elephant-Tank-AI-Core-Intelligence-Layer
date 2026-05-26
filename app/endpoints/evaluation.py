@@ -108,7 +108,12 @@ async def evaluate_startup(request: StartupEvaluationRequest):
         parsed_data["evaluation_results"]["overall_score"] = int(overall)
         
         # 7. DETERMINISTIC CONFIDENCE ENGINE
-        base_conf = parsed_data.get("confidence_summary", {}).get("overall_confidence", 5)
+        raw_conf = parsed_data.get("confidence_summary", {}).get("overall_confidence", 5)
+        try:
+            base_conf = int(float(raw_conf))
+        except (ValueError, TypeError):
+            base_conf = 5
+            
         final_conf = DeterministicConfidenceEngine.calculate_confidence(
             request.startup_description, 
             request.founder_data, 

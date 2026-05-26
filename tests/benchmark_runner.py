@@ -4,7 +4,7 @@ import time
 import requests
 
 # Assuming the server is running locally on 8000
-API_URL = "http://localhost:8000/evaluate-startup"
+API_URL = "http://127.0.0.1:8000/evaluate-startup"
 BENCHMARK_FILE = os.path.join(os.path.dirname(__file__), "benchmarks", "benchmark_startups.json")
 
 def run_benchmarks():

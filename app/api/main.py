@@ -24,7 +24,9 @@ def create_app() -> FastAPI:
     app.add_exception_handler(Exception, global_exception_handler)
     
     # Bind routers
+    from app.endpoints.ingestion import router as ingestion_router
     app.include_router(eval_router)
+    app.include_router(ingestion_router)
     app.include_router(health_router)
     
     # Matching routers would be included here:

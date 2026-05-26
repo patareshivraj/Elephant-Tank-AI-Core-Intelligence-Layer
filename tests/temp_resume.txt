@@ -1,0 +1,21 @@
+John Doe
+San Francisco, CA | john.doe@example.com | 123-456-7890
+
+SUMMARY
+Experienced Technical Leader with over 8 years in Machine Learning infrastructure. Founded and exited AI-Scale, a data annotation platform. Ex-VP of AI at Stripe.
+
+EXPERIENCE
+VP of Artificial Intelligence | Stripe (2022 - Present)
+- Led a team of 40 ML Engineers.
+- Scale core transactional fraud detection by 400%.
+
+Founder & CEO | AI-Scale (2018 - 2022)
+- Built enterprise data annotation tool from scratch.
+- Bootstrapped to $2M ARR, then successfully exited.
+
+EDUCATION
+PhD in Computer Science | Stanford University (2014 - 2018)
+Research focused on distributed systems and high-throughput databases.
+
+TECHNICAL SKILLS
+Python, PyTorch, C++, Distributed Systems, AWS, Kubernetes, LLMs, Scalability.

@@ -1,0 +1,20 @@
+MEDI-TECH ADVANCED DIAGNOSTICS PITCH DECK
+
+THE PROBLEM
+Radiology departments are understaffed and facing a massive backlog of MRI and CT scans. Mistakes are made due to fatigue, leading to delayed diagnoses for cancer patients.
+
+THE SOLUTION
+Medi-Tech is an FDA-cleared computer vision platform that co-pilots radiologists. It acts as a primary analyzer, highlighting potential issues with 99.4% accuracy.
+
+THE MARKET
+TAM: $12 Billion globally.
+SAM: $3.2 Billion in North America.
+
+TRACTION
+- Deployed in 8 major hospital systems.
+- $1.5 Million in current Annual Recurring Revenue (ARR).
+- Growing 20% month-over-month.
+
+FOUNDERS
+- Dr. Jane Smith: MD, PhD from Harvard Medical School, 15 years as practicing radiologist.
+- Alex Rivera: Ex-Director of Sales at Veeva Systems, closed $50M in enterprise health contracts.
