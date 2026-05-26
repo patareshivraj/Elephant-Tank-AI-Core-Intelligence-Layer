@@ -1,0 +1,43 @@
+TASK: Execute a comprehensive qualitative evaluation of a startup based on its structured profile data.
+
+### EVALUATION DIMENSIONS (Scale 1-10)
+1. **Innovation & Differentiation**: Assess technical uniqueness, patents, moats. Penalize simple API wrappers.
+2. **Market Potential**: Assess TAM/SAM/SOM realism and demand.
+3. **Scalability**: Assess operational leverage. High manual labor lowers this score.
+4. **Revenue Viability**: Assess pricing logic, unit economics, and monetization clarity.
+5. **Founder Capability**: Assess execution speed, domain experience, exits.
+6. **Competition & Risk**: Assess competitor saturation and incumbent threats.
+7. **Funding Readiness**: Assess maturity and traction against the current funding stage.
+
+### RULES:
+- Output must be valid JSON ONLY.
+- Every dimension must include a score (1-10) and an array of `reasoning_traces`.
+- If an input field says "UNVERIFIED", note it in the traces and lower the score.
+
+### JSON OUTPUT CONTRACT:
+{
+  "dimension_scores": {
+    "innovation_score": 0,
+    "market_potential_score": 0,
+    "scalability_score": 0,
+    "revenue_viability_score": 0,
+    "founder_capability_score": 0,
+    "competition_risk_score": 0,
+    "funding_readiness_score": 0
+  },
+  "dimension_reasoning_traces": {
+    "innovation_traces": ["..."],
+    "market_potential_traces": ["..."],
+    "scalability_traces": ["..."],
+    "revenue_viability_traces": ["..."],
+    "founder_capability_traces": ["..."],
+    "competition_risk_traces": ["..."],
+    "funding_readiness_traces": ["..."]
+  },
+  "strengths": ["...", "..."],
+  "weaknesses": ["...", "..."],
+  "due_diligence_questions": ["...", "..."]
+}
+
+INPUT DATA:
+{startup_json}
