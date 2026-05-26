@@ -19,3 +19,34 @@ class HealthResponse(BaseModel):
     groq_status: str
     vector_db_status: str
     pipeline_integrity: bool
+
+class StartupProfile(BaseModel):
+    startup_name: str
+    target_stage: str
+
+class EvaluationResults(BaseModel):
+    innovation_score: float = Field(ge=0.0, le=100.0)
+    market_score: float = Field(ge=0.0, le=100.0)
+    scalability_score: float = Field(ge=0.0, le=100.0)
+    founder_score: float = Field(ge=0.0, le=100.0)
+    funding_readiness_score: float = Field(ge=0.0, le=100.0)
+
+class FounderIntelligence(BaseModel):
+    strengths: List[str]
+    weaknesses: List[str]
+
+class RiskAnalysis(BaseModel):
+    risks: List[str]
+
+class ConfidenceSummary(BaseModel):
+    overall_confidence: float = Field(ge=0.0, le=100.0)
+
+class StartupEvaluationResponse(BaseModel):
+    pipeline_id: str
+    startup_profile: StartupProfile
+    evaluation_results: EvaluationResults
+    founder_intelligence: FounderIntelligence
+    risk_analysis: RiskAnalysis
+    recommendations: List[str]
+    confidence_summary: ConfidenceSummary
+    execution_logs: List[str]
