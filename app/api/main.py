@@ -28,11 +28,13 @@ def create_app() -> FastAPI:
     from app.endpoints.semantic_intelligence import router as semantic_router
     from app.endpoints.strategic_intelligence import router as strategic_router
     from app.endpoints.continuous_intelligence import router as continuous_router
+    from app.endpoints.workflow_intelligence import router as workflow_router
     app.include_router(eval_router)
     app.include_router(ingestion_router)
     app.include_router(semantic_router)
     app.include_router(strategic_router)
     app.include_router(continuous_router)
+    app.include_router(workflow_router)
     app.include_router(health_router)
     
     return app
