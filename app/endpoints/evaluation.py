@@ -73,13 +73,13 @@ async def evaluate_startup(request: StartupEvaluationRequest):
             parsed_data["pipeline_id"] = f"eval_{uuid.uuid4().hex[:8]}"
             
         # 6. DETERMINISTIC LOCAL PYTHON MATH ENGINE & NORMALIZATION
-        # Extract base scores (1-10 scale)
+        # Extract and defensively bound base scores to valid 1-10 range
         eval_res = parsed_data.get("evaluation_results", {})
-        inv = eval_res.get("innovation_score", 0)
-        mkt = eval_res.get("market_score", 0)
-        scl = eval_res.get("scalability_score", 0)
-        fnd = eval_res.get("founder_score", 0)
-        frs = eval_res.get("funding_readiness_score", 0)
+        inv = max(1, min(10, int(eval_res.get("innovation_score", 5))))
+        mkt = max(1, min(10, int(eval_res.get("market_score", 5))))
+        scl = max(1, min(10, int(eval_res.get("scalability_score", 5))))
+        fnd = max(1, min(10, int(eval_res.get("founder_score", 5))))
+        frs = max(1, min(10, int(eval_res.get("funding_readiness_score", 5))))
         
         # Normalization: Cap innovation if "wrapper" is detected in description
         desc_lower = request.startup_description.lower()
@@ -93,8 +93,13 @@ async def evaluate_startup(request: StartupEvaluationRequest):
             logger.info("Normalization Applied: Capped market score for saturated industry.")
             
         # Update parsed data with normalized scores
+        if "evaluation_results" not in parsed_data:
+            parsed_data["evaluation_results"] = {}
         parsed_data["evaluation_results"]["innovation_score"] = inv
         parsed_data["evaluation_results"]["market_score"] = mkt
+        parsed_data["evaluation_results"]["scalability_score"] = scl
+        parsed_data["evaluation_results"]["founder_score"] = fnd
+        parsed_data["evaluation_results"]["funding_readiness_score"] = frs
         
         # Calculate overall score dynamically based on stage (Scale 0-100)
         stage = request.target_stage.lower()
