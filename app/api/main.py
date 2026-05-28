@@ -3,6 +3,7 @@ load_dotenv()
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from app.endpoints.evaluation import router as eval_router
 from app.endpoints.health import router as health_router
 from app.middleware.error_handler import validation_exception_handler, global_exception_handler
@@ -17,6 +18,15 @@ def create_app() -> FastAPI:
         title="Elephant Tank AI",
         description="Deterministic Startup Intelligence & Evaluation Engine",
         version="1.0.0"
+    )
+    
+    # Enable CORS for external Frontend access across devices
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],  # In production, specify your frontend domain like: ["https://your-frontend-app.com"]
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
     
     # Bind custom error middleware
